@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "92289073419",
+    "project_id": "rideshear-app",
+    "storage_bucket": "rideshear-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92289073419:android:0cdff67bdc58c56f6c220e",
+        "android_client_info": {
+          "package_name": "com.example.rideshear"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92289073419-is8o87peri2k9rnakhm0l5eg84527364.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rideshear",
+            "certificate_hash": "2174ae49c2e6a6753bdd6611a14b393e5ec82643"
+          }
+        },
+        {
+          "client_id": "92289073419-a0tj7foj3vhkjs9ui3tgl09h463k1dne.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlerPAZsyQfwXbUjoEtpdS8o-qlM3JTaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92289073419-a0tj7foj3vhkjs9ui3tgl09h463k1dne.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

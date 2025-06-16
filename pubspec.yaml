@@ -39,7 +39,7 @@ dependencies:
   provider: ^6.1.2
 
   # Navigation
-  go_router: ^14.0.0
+  go_router: ^15.2.0
 
   # HTTP requests
   http: ^1.2.0
@@ -50,14 +50,14 @@ dependencies:
 
   # Maps and location
   google_maps_flutter: ^2.5.0
-  location: ^5.0.0
-  geolocator: ^10.1.0
-
+  location: ^8.0.0
+  geolocator: ^14.0.1
   # Firebase (Authentication, Cloud Messaging, Analytics)
-  firebase_core: ^2.24.0
-  firebase_auth: ^4.15.0
-  firebase_messaging: ^14.7.0
-  cloud_firestore: ^4.13.0
+  firebase_core: ^3.8.1
+  firebase_auth: ^5.3.4
+  firebase_messaging: ^15.1.6
+  cloud_firestore: ^5.5.0
+  google_sign_in: ^6.2.1 # Added Google Sign-In
 
   # UI components
   flutter_svg: ^2.0.9
@@ -67,7 +67,7 @@ dependencies:
   # stripe_flutter: ^9.4.0
 
   # Utilities
-  intl: ^0.18.0
+  intl: ^0.20.2
   uuid: ^4.2.0
 
 dev_dependencies:
@@ -79,7 +79,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'utils/app_theme.dart';
 import 'constants/app_constants.dart';
 import 'providers/auth_provider.dart';
@@ -11,11 +12,15 @@ import 'screens/home/home_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   try {
-    await Firebase.initializeApp();
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('Firebase initialized successfully');
   } catch (e) {
-    print('Firebase initialization error: $e');
+    print('Firebase initialization failed: $e');
+    print('Running app without Firebase features');
   }
 
   runApp(const RideShareApp());

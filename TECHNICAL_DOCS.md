@@ -1,6 +1,7 @@
 # Technical Documentation - RideShare App
 
 ## 📋 Table of Contents
+
 1. [Architecture Overview](#architecture-overview)
 2. [Code Structure](#code-structure)
 3. [State Management](#state-management)
@@ -16,12 +17,14 @@
 ## 🏗️ Architecture Overview
 
 ### Design Principles
+
 - **Clean Architecture:** Separation of concerns with clear layer boundaries
 - **SOLID Principles:** Single responsibility, open/closed, dependency inversion
 - **Provider Pattern:** Reactive state management with automatic UI updates
 - **Modular Design:** Reusable components and services
 
 ### Layer Structure
+
 ```
 Presentation Layer (UI)
 ├── Screens (Feature-based organization)
@@ -73,6 +76,7 @@ lib/
 ```
 
 ### Naming Conventions
+
 - **Files:** snake_case (e.g., `sign_in_screen.dart`)
 - **Classes:** PascalCase (e.g., `SignInScreen`)
 - **Variables:** camelCase (e.g., `isLoading`)
@@ -85,6 +89,7 @@ lib/
 ### Provider Pattern Implementation
 
 #### AuthProvider
+
 ```dart
 class AuthProvider with ChangeNotifier {
   User? _currentUser;
@@ -104,6 +109,7 @@ class AuthProvider with ChangeNotifier {
 ```
 
 #### State Flow
+
 1. **UI triggers action** → Button press, form submission
 2. **Provider processes** → Update loading state, call service
 3. **Service executes** → Firebase API call, data processing
@@ -111,6 +117,7 @@ class AuthProvider with ChangeNotifier {
 5. **UI rebuilds** → Consumer widgets rebuild automatically
 
 #### Consumer Implementation
+
 ```dart
 Consumer<AuthProvider>(
   builder: (context, authProvider, child) {
@@ -132,6 +139,7 @@ Consumer<AuthProvider>(
 ### Firebase Integration
 
 #### Service Layer
+
 ```dart
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -143,19 +151,20 @@ class AuthService {
       email: email,
       password: password,
     );
-    
+
     // Fetch user data from Firestore
     final userDoc = await _firestore
         .collection('users')
         .doc(credential.user!.uid)
         .get();
-    
+
     return User.fromJson(userDoc.data()!);
   }
 }
 ```
 
 #### Error Handling
+
 ```dart
 String _handleAuthException(FirebaseAuthException e) {
   switch (e.code) {
@@ -168,6 +177,7 @@ String _handleAuthException(FirebaseAuthException e) {
 ```
 
 ### Authentication Flow
+
 1. **User Input** → Email/password validation
 2. **Service Call** → Firebase authentication
 3. **User Data** → Fetch from Firestore
@@ -181,6 +191,7 @@ String _handleAuthException(FirebaseAuthException e) {
 ### Custom Button Component
 
 #### Features
+
 - Multiple variants (filled, outlined)
 - Loading states with spinner
 - Icon support
@@ -188,6 +199,7 @@ String _handleAuthException(FirebaseAuthException e) {
 - Accessibility support
 
 #### Implementation
+
 ```dart
 class CustomButton extends StatelessWidget {
   final String text;
@@ -221,6 +233,7 @@ class CustomButton extends StatelessWidget {
 ### Custom Text Field Component
 
 #### Features
+
 - Built-in validation support
 - Error state handling
 - Prefix/suffix icon support
@@ -228,6 +241,7 @@ class CustomButton extends StatelessWidget {
 - Customizable styling
 
 #### Usage
+
 ```dart
 CustomTextField(
   controller: _emailController,
@@ -245,6 +259,7 @@ CustomTextField(
 ### Theme System
 
 #### Material Design 3 Implementation
+
 ```dart
 class AppTheme {
   static ThemeData get lightTheme {
@@ -260,6 +275,7 @@ class AppTheme {
 ```
 
 #### Design Tokens
+
 - **Colors:** Primary, secondary, neutral palette
 - **Typography:** Heading, body, label variants
 - **Spacing:** Consistent padding/margin system
@@ -270,6 +286,7 @@ class AppTheme {
 ## 📊 Data Models
 
 ### User Model
+
 ```dart
 class User {
   final String id;
@@ -303,6 +320,7 @@ enum UserType { rider, driver }
 ```
 
 ### Ride Model
+
 ```dart
 class Ride {
   final String id;
@@ -327,6 +345,7 @@ enum RideType { economy, premium, xl }
 ## 🔧 Services Layer
 
 ### AuthService Architecture
+
 ```dart
 class AuthService {
   // Firebase instances
@@ -346,6 +365,7 @@ class AuthService {
 ```
 
 ### Error Handling Strategy
+
 - **Firebase Exceptions:** Mapped to user-friendly messages
 - **Network Errors:** Retry mechanisms and offline handling
 - **Validation Errors:** Client-side validation with server verification
@@ -356,6 +376,7 @@ class AuthService {
 ## 🧪 Testing Strategy
 
 ### Current Test Coverage
+
 ```dart
 // Widget test example
 testWidgets('App loads correctly', (WidgetTester tester) async {
@@ -365,12 +386,14 @@ testWidgets('App loads correctly', (WidgetTester tester) async {
 ```
 
 ### Planned Testing Approach
+
 - **Unit Tests:** Model serialization, validation logic
 - **Widget Tests:** UI component behavior
 - **Integration Tests:** Authentication flow, navigation
 - **End-to-End Tests:** Complete user journeys
 
 ### Testing Tools
+
 - `flutter_test` for widget and unit tests
 - `mockito` for mocking dependencies
 - `integration_test` for E2E testing
@@ -381,6 +404,7 @@ testWidgets('App loads correctly', (WidgetTester tester) async {
 ## 🚀 Build & Deployment
 
 ### Build Configuration
+
 ```yaml
 # pubspec.yaml
 name: rideshear
@@ -391,7 +415,7 @@ environment:
   flutter: ">=3.8.0"
 
 dependencies:
-  flutter: {sdk: flutter}
+  flutter: { sdk: flutter }
   provider: ^6.1.2
   firebase_core: ^2.24.0
   firebase_auth: ^4.15.0
@@ -399,6 +423,7 @@ dependencies:
 ```
 
 ### Release Build Process
+
 ```bash
 # Android Release
 flutter build apk --release
@@ -412,6 +437,7 @@ flutter build web --release
 ```
 
 ### Deployment Checklist
+
 - [ ] Firebase configuration files added
 - [ ] Release signing configured
 - [ ] Environment variables set
@@ -423,12 +449,14 @@ flutter build web --release
 ## 📈 Performance Considerations
 
 ### Optimization Strategies
+
 - **Lazy Loading:** Screens loaded on demand
 - **Image Optimization:** Cached network images
 - **State Management:** Minimal rebuilds with Provider
 - **Bundle Size:** Tree shaking for smaller builds
 
 ### Memory Management
+
 - **Provider Disposal:** Proper cleanup of listeners
 - **Stream Subscriptions:** Cancelled in dispose methods
 - **Image Caching:** LRU cache for network images
@@ -439,12 +467,14 @@ flutter build web --release
 ## 🔒 Security Implementation
 
 ### Authentication Security
+
 - Firebase secure token management
 - Automatic token refresh
 - Secure local storage for user preferences
 - Input validation and sanitization
 
 ### Data Protection
+
 - HTTPS for all network requests
 - Firebase security rules for Firestore
 - No sensitive data in client-side code
@@ -455,12 +485,14 @@ flutter build web --release
 ## 📚 Development Guidelines
 
 ### Code Quality Standards
+
 - Follow Dart/Flutter style guide
 - Use meaningful variable and function names
 - Add documentation for public APIs
 - Implement proper error handling
 
 ### Git Workflow
+
 ```bash
 # Feature development
 git checkout -b feature/ride-booking
@@ -470,6 +502,7 @@ git push origin feature/ride-booking
 ```
 
 ### Code Review Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Tests are included and passing
 - [ ] Documentation is updated
@@ -481,12 +514,14 @@ git push origin feature/ride-booking
 ## 🔮 Future Technical Considerations
 
 ### Scalability Preparations
+
 - **State Management:** Consider Riverpod for complex state
 - **Architecture:** Evaluate Clean Architecture patterns
 - **Backend:** GraphQL for efficient data fetching
 - **Caching:** Redis for high-performance caching
 
 ### Technology Upgrades
+
 - **Flutter:** Stay updated with latest stable versions
 - **Firebase:** Migrate to latest SDK versions
 - **Dependencies:** Regular dependency updates
@@ -494,6 +529,6 @@ git push origin feature/ride-booking
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: June 15, 2025*  
-*Generated by: RideShare Development Team*
+_Document Version: 1.0_  
+_Last Updated: June 15, 2025_  
+_Generated by: RideShare Development Team_

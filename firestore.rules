@@ -1,0 +1,172 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions for validation
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidEmail(email) {
+      return email is string && email.matches('.*@.*\\..*');
+    }
+    
+    function isValidUserData() {
+      return request.resource.data.keys().hasAll(['name', 'email', 'userType', 'createdAt']) &&
+             request.resource.data.name is string &&
+             request.resource.data.name.size() > 0 &&
+             isValidEmail(request.resource.data.email) &&
+             request.resource.data.userType in ['rider', 'driver'] &&
+             request.resource.data.createdAt is timestamp;
+    }
+    
+    function isValidRideData() {
+      return request.resource.data.keys().hasAll(['riderId', 'pickupAddress', 'destinationAddress', 'status', 'rideType', 'estimatedFare', 'requestTime']) &&
+             request.resource.data.riderId is string &&
+             request.resource.data.pickupAddress is string &&
+             request.resource.data.destinationAddress is string &&
+             request.resource.data.status in ['requested', 'accepted', 'started', 'completed', 'cancelled'] &&
+             request.resource.data.rideType in ['standard', 'premium', 'shared'] &&
+             request.resource.data.estimatedFare is number &&
+             request.resource.data.estimatedFare >= 0 &&
+             request.resource.data.requestTime is timestamp;
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Users can read and write their own profile
+      allow read, write: if isAuthenticated() && isOwner(userId);
+      
+      // Users can read other users' basic info (for ride sharing)
+      allow read: if isAuthenticated() && 
+                     request.auth.uid != userId &&
+                     resource.data.keys().hasAny(['name', 'userType', 'profileImageUrl']);
+      
+      // Validate user data on create/update
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) && 
+                       isValidUserData();
+                       
+      allow update: if isAuthenticated() && 
+                       isOwner(userId) && 
+                       isValidUserData() &&
+                       // Prevent changing userType after creation
+                       request.resource.data.userType == resource.data.userType;
+    }
+    
+    // Rides collection rules
+    match /rides/{rideId} {
+      // Riders can create rides
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.riderId) &&
+                       isValidRideData();
+      
+      // Riders can read their own rides
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.riderId) || 
+                      (resource.data.driverId != null && isOwner(resource.data.driverId)));
+      
+      // Drivers can read available rides (status = 'requested')
+      allow read: if isAuthenticated() && 
+                     resource.data.status == 'requested';
+      
+      // Riders can update their own rides (limited fields)
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.riderId) &&
+                       // Only allow specific status transitions
+                       (request.resource.data.status in ['requested', 'cancelled']) &&
+                       // Prevent changing core ride details
+                       request.resource.data.riderId == resource.data.riderId &&
+                       request.resource.data.pickupAddress == resource.data.pickupAddress &&
+                       request.resource.data.destinationAddress == resource.data.destinationAddress;
+      
+      // Drivers can accept rides and update status
+      allow update: if isAuthenticated() && 
+                       // Driver is accepting the ride
+                       ((resource.data.driverId == null && 
+                         request.resource.data.driverId == request.auth.uid &&
+                         request.resource.data.status == 'accepted') ||
+                        // Driver updating their accepted ride
+                        (resource.data.driverId == request.auth.uid &&
+                         request.resource.data.status in ['accepted', 'started', 'completed'])) &&
+                       // Prevent changing core ride details
+                       request.resource.data.riderId == resource.data.riderId &&
+                       request.resource.data.pickupAddress == resource.data.pickupAddress &&
+                       request.resource.data.destinationAddress == resource.data.destinationAddress;
+      
+      // Allow rating and feedback after ride completion
+      allow update: if isAuthenticated() && 
+                       resource.data.status == 'completed' &&
+                       (isOwner(resource.data.riderId) || isOwner(resource.data.driverId)) &&
+                       // Only allow updating rating and feedback
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rating', 'feedback', 'updatedAt']);
+    }
+    
+    // Driver profiles collection (additional driver-specific data)
+    match /drivers/{driverId} {
+      // Drivers can read and write their own profile
+      allow read, write: if isAuthenticated() && isOwner(driverId);
+      
+      // Users can read driver profiles for ride matching
+      allow read: if isAuthenticated();
+      
+      // Validate driver data
+      allow create, update: if isAuthenticated() && 
+                              isOwner(driverId) &&
+                              request.resource.data.keys().hasAll(['vehicleInfo', 'licenseNumber', 'isAvailable']) &&
+                              request.resource.data.vehicleInfo is map &&
+                              request.resource.data.licenseNumber is string &&
+                              request.resource.data.isAvailable is bool;
+    }
+    
+    // Chat/Messages collection for ride communication
+    match /rides/{rideId}/messages/{messageId} {
+      // Only ride participants can read messages
+      allow read: if isAuthenticated() && 
+                     (isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.riderId) ||
+                      isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.driverId));
+      
+      // Only ride participants can send messages
+      allow create: if isAuthenticated() && 
+                       (isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.riderId) ||
+                        isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.driverId)) &&
+                       request.resource.data.keys().hasAll(['senderId', 'message', 'timestamp']) &&
+                       isOwner(request.resource.data.senderId) &&
+                       request.resource.data.message is string &&
+                       request.resource.data.message.size() > 0 &&
+                       request.resource.data.timestamp is timestamp;
+    }
+    
+    // Reports collection for safety and moderation
+    match /reports/{reportId} {
+      // Users can create reports
+      allow create: if isAuthenticated() &&
+                       request.resource.data.keys().hasAll(['reporterId', 'reportedUserId', 'reason', 'description', 'timestamp']) &&
+                       isOwner(request.resource.data.reporterId) &&
+                       request.resource.data.reportedUserId is string &&
+                       request.resource.data.reason is string &&
+                       request.resource.data.description is string &&
+                       request.resource.data.timestamp is timestamp;
+      
+      // Users can read their own reports
+      allow read: if isAuthenticated() && isOwner(resource.data.reporterId);
+      
+      // Prevent updates to reports (immutable for integrity)
+      allow update, delete: if false;
+    }
+    
+    // App settings/configuration (read-only for users)
+    match /config/{document} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Only admins via server-side code
+    }
+    
+    // User tokens for push notifications
+    match /userTokens/{userId} {
+      allow read, write: if isAuthenticated() && isOwner(userId);
+    }
+  }
+}

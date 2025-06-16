@@ -13,6 +13,7 @@ A modern, feature-rich ride-sharing application built with Flutter, following th
 **Authentication & User Management:**
 
 - User registration and login with email/password
+- Google Sign-In integration (New!)
 - User type selection (Rider/Driver)
 - Profile management
 - Firebase Authentication integration
@@ -23,7 +24,7 @@ A modern, feature-rich ride-sharing application built with Flutter, following th
 - Custom theme with beautiful color scheme
 - Responsive design for all screen sizes
 - Modern animations and transitions
-- Custom widgets and components
+- Custom widgets and components (e.g., `CustomButton` with primary/secondary styles) (Updated!)
 
 **App Structure:**
 
@@ -67,25 +68,26 @@ A modern, feature-rich ride-sharing application built with Flutter, following th
 
 ```
 lib/
-├── constants/           # App constants, colors, strings
+├── constants/           # App constants, colors, strings, dimensions, typography
 ├── models/             # Data models (User, Ride, Driver)
-├── providers/          # State management (Provider pattern)
+├── providers/          # State management (AuthProvider, etc.)
 ├── screens/            # UI screens organized by feature
-│   ├── auth/          # Authentication screens
+│   ├── auth/          # Authentication screens (SignInScreen, SignUpScreen)
 │   ├── home/          # Home and dashboard screens
 │   ├── ride/          # Ride booking and tracking
 │   └── profile/       # User profile screens
-├── services/           # Business logic and API calls
+├── services/           # Business logic and API calls (AuthService, etc.)
 ├── utils/              # Utility functions and helpers
-└── widgets/            # Reusable custom widgets
+└── widgets/            # Reusable custom widgets (CustomButton, CustomTextField)
 ```
 
 ## Technology Stack
 
-- **Framework:** Flutter 3.8+
+- **Framework:** Flutter (latest stable version)
 - **State Management:** Provider
 - **Backend:** Firebase (Auth, Firestore, Messaging)
-- **Maps:** Google Maps API
+- **Authentication:** Firebase Authentication (Email/Password, Google Sign-In) (Updated!)
+- **Maps:** Google Maps API (planned)
 - **Payment:** Stripe integration (planned)
 - **Architecture:** Clean Architecture with Provider pattern
 
@@ -120,9 +122,10 @@ lib/
    - Download configuration files:
      - `google-services.json` → `android/app/`
      - `GoogleService-Info.plist` → `ios/Runner/`
-   - Enable Authentication (Email/Password)
+   - Enable Authentication (Email/Password, Google Sign-In) (Updated!)
+   - Configure SHA-1 fingerprints for Android for Google Sign-In.
    - Enable Firestore Database
-   - Enable Cloud Messaging
+   - Enable Cloud Messaging (optional for core auth, but good for future features)
 
 4. **Run the app:**
    ```bash
@@ -157,6 +160,7 @@ The app currently includes:
 1. **Authentication System:**
 
    - Beautiful sign-in and sign-up screens
+   - Sign-in with Email/Password and Google Sign-In (New!)
    - User type selection (Rider/Driver)
    - Form validation and error handling
    - Loading states and user feedback
@@ -170,8 +174,8 @@ The app currently includes:
 
 3. **App Infrastructure:**
    - Custom theme with modern color scheme
-   - Reusable widgets (CustomButton, CustomTextField)
-   - Provider-based state management
+   - Reusable widgets (e.g., `CustomButton` with primary, secondary, and outlined styles, `CustomTextField`) (Updated!)
+   - Provider-based state management for authentication
    - Proper navigation setup
 
 ## Next Steps
@@ -194,7 +198,7 @@ The app currently includes:
    - Driver matching algorithm
    - Real-time tracking
 
-4. **Payment Integration:**   - Stripe payment gateway
+4. **Payment Integration:** - Stripe payment gateway
    - Multiple payment methods
    - Receipt system
 
@@ -212,20 +216,21 @@ This project includes comprehensive documentation to help developers understand,
 
 ### **Quick Navigation**
 
-| Document | Description | Audience |
-|----------|-------------|----------|
-| README.md | Project overview and quick start | Everyone |
-| PROJECT_SUMMARY.md | Executive summary and status | Project managers, stakeholders |
-| TECHNICAL_DOCS.md | Code architecture and implementation | Developers, architects |
-| DEVELOPER_GUIDE.md | Setup and development workflow | New developers |
-| CHANGELOG.md | Version history and changes | All team members |
+| Document           | Description                          | Audience                       |
+| ------------------ | ------------------------------------ | ------------------------------ |
+| README.md          | Project overview and quick start     | Everyone                       |
+| PROJECT_SUMMARY.md | Executive summary and status         | Project managers, stakeholders |
+| TECHNICAL_DOCS.md  | Code architecture and implementation | Developers, architects         |
+| DEVELOPER_GUIDE.md | Setup and development workflow       | New developers                 |
+| CHANGELOG.md       | Version history and changes          | All team members               |
 
 ## 🎯 Current Status
 
 **Version:** 1.0.0 - Phase 1 Complete ✅
 
 The app currently features:
-- ✅ Complete authentication system with Firebase
+
+- ✅ Complete authentication system with Firebase (Email/Password, Google Sign-In) (Updated!)
 - ✅ Modern Material Design 3 UI
 - ✅ User registration and login with user type selection
 - ✅ Clean architecture with Provider state management
@@ -252,6 +257,7 @@ This project is part of a ride-sharing app development tutorial/exercise.
 ## 🚀 Quick Start Summary
 
 1. **Clone & Setup:**
+
    ```bash
    git clone <repository-url>
    cd rideshear
@@ -259,9 +265,11 @@ This project is part of a ride-sharing app development tutorial/exercise.
    ```
 
 2. **Configure Firebase:**
+
    - Follow [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) for detailed Firebase setup
 
 3. **Run the App:**
+
    ```bash
    flutter run
    ```

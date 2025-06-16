@@ -1,0 +1,20 @@
+{
+  "name": "rideshear-security-tests",
+  "version": "1.0.0",
+  "description": "Security rules tests for RideShare Firebase project",
+  "scripts": {
+    "test": "jest firestore.test.js",
+    "test:watch": "jest firestore.test.js --watch",
+    "test:coverage": "jest firestore.test.js --coverage",
+    "emulator": "firebase emulators:start --only firestore",
+    "deploy:rules": "firebase deploy --only firestore:rules"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^3.0.3",
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testTimeout": 10000
+  }
+}

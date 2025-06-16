@@ -174,6 +174,10 @@ class AppTypography {
   );
 }
 
+/// Defines constant string values used throughout the application.
+///
+/// This includes UI text like button labels, titles, and messages.
+/// Grouped by feature or context for better organization.
 class AppStrings {
   // App
   static const String appName = 'RideShare';
@@ -181,6 +185,9 @@ class AppStrings {
 
   // Authentication
   static const String signIn = 'Sign In';
+
+  /// Text for the Google Sign-In button.
+  static const String signInWithGoogle = 'Sign In with Google';
   static const String signUp = 'Sign Up';
   static const String signOut = 'Sign Out';
   static const String email = 'Email';

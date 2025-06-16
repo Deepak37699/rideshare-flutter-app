@@ -5,6 +5,11 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 
+/// A screen for users to sign in using email/password or Google Sign-In.
+///
+/// It provides form fields for email and password, along with buttons for
+/// standard sign-in and Google Sign-In. It uses [AuthProvider] to handle
+/// authentication logic and displays appropriate feedback to the user.
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
 
@@ -25,6 +30,7 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  /// Attempts to sign in the user with email and password.
   Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -35,7 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
       );
 
       if (success && mounted) {
-        // Navigation will be handled by the main app based on auth state
+        // Navigation is handled by the root MaterialApp based on auth state changes.
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -44,6 +50,23 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         );
       }
+    }
+  }
+
+  /// Attempts to sign in the user with Google.
+  Future<void> _signInWithGoogle() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.signInWithGoogle();
+
+    if (success && mounted) {
+      // Navigation is handled by the root MaterialApp based on auth state changes.
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.error ?? 'Google Sign-in failed'),
+          backgroundColor: AppColors.error,
+        ),
+      );
     }
   }
 
@@ -177,10 +200,30 @@ class _SignInScreenState extends State<SignInScreen> {
                           text: AppStrings.signIn,
                           isLoading: authProvider.isLoading,
                           onPressed: _signIn,
+                          // isPrimary is true by default
                         );
                       },
                     ),
                     const SizedBox(height: AppDimensions.paddingL),
+
+                    // Sign in with Google Button
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, child) {
+                        return CustomButton(
+                          text: AppStrings.signInWithGoogle,
+                          isLoading: authProvider.isLoading,
+                          onPressed: _signInWithGoogle,
+                          icon: Icons
+                              .login, // Example icon, replace if you have a Google icon
+                          isPrimary:
+                              false, // Set to false for secondary styling
+                          // backgroundColor: AppColors.white, // Optional: if you want a specific background for Google button
+                          // textColor: AppColors.textPrimary, // Optional: if you want a specific text color for Google button
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: AppDimensions.paddingXL),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

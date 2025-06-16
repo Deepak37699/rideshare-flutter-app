@@ -7,6 +7,7 @@ class User {
   final UserType userType;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? photoUrl; // Added photoUrl field
 
   User({
     required this.id,
@@ -14,6 +15,7 @@ class User {
     required this.email,
     this.phoneNumber,
     this.profileImageUrl,
+    this.photoUrl, // Added photoUrl
     required this.userType,
     required this.createdAt,
     required this.updatedAt,
@@ -26,6 +28,7 @@ class User {
       'email': email,
       'phoneNumber': phoneNumber,
       'profileImageUrl': profileImageUrl,
+      'photoUrl': photoUrl, // Added photoUrl
       'userType': userType.toString(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -39,6 +42,7 @@ class User {
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       profileImageUrl: json['profileImageUrl'],
+      photoUrl: json['photoUrl'], // Added photoUrl
       userType: UserType.values.firstWhere(
         (e) => e.toString() == json['userType'],
       ),
@@ -53,6 +57,7 @@ class User {
     String? email,
     String? phoneNumber,
     String? profileImageUrl,
+    String? photoUrl, // Added photoUrl
     UserType? userType,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -63,6 +68,7 @@ class User {
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      photoUrl: photoUrl ?? this.photoUrl, // Added photoUrl
       userType: userType ?? this.userType,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
